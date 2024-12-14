@@ -1,9 +1,9 @@
 <script>
-    import Header from "$lib/Header.svelte";
-    import PostCard from "$lib/Post/PostCard.svelte";
-    import CreatePost from "$lib/Post/CreatePost.svelte";
-    import PostStat from "$lib/Post/PostStat.svelte";
-    import Modal from "$lib/Modal.svelte";
+    import Header from "$lib/components/Header.svelte";
+    import PostCard from "$lib/components/Post/PostCard.svelte";
+    import CreatePost from "$lib/components/Post/CreatePost.svelte";
+    import PostStat from "$lib/components/Post/PostStat.svelte";
+    import Modal from "$lib/components/Modal.svelte";
 
     const posts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let modalItem;

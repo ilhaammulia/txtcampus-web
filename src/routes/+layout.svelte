@@ -2,7 +2,7 @@
   import '../app.css';
   import { afterNavigate } from "$app/navigation";
 
-  import Sidebar from '$lib/Sidebar.svelte';
+  import Sidebar from '$lib/components/Sidebar.svelte';
 
   afterNavigate(() => {
     HSStaticMethods.autoInit();

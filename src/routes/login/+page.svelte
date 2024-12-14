@@ -1,4 +1,10 @@
 <script>
+    let username, password = "";
+
+    async function handleLogin() {
+        console.log(username, password);
+    }
+
 </script>
 
 <svelte:head>
@@ -17,6 +23,7 @@
             </div>
             <input
                 id="form-username"
+                bind:value={username}
                 type="text"
                 placeholder="Enter username or email"
                 class="input"
@@ -29,6 +36,7 @@
             <div class="input-group w-full">
                 <input
                     id="form-password"
+                    bind:value={password}
                     type="password"
                     class="input"
                     placeholder="Enter password"
@@ -53,7 +61,7 @@
             </div>
         </label>
         <div class="mt-4">
-            <button
+            <button on:click={handleLogin}
                 class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full"
                 >Login</button
             >
