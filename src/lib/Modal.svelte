@@ -1,0 +1,29 @@
+<script>
+    let { id, title, children } = $props();
+</script>
+
+<div
+    {id}
+    class="overlay modal overlay-open:opacity-100 hidden"
+    role="dialog"
+    tabindex="-1"
+>
+    <div class="modal-dialog overlay-open:opacity-100 modal-dialog-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">{title}</h3>
+                <button
+                    type="button"
+                    class="btn btn-text btn-circle btn-sm absolute end-3 top-3"
+                    aria-label="Close"
+                    data-overlay="#{id}"
+                >
+                    <span class="icon-[tabler--x] size-4"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {@render children()}
+            </div>
+        </div>
+    </div>
+</div>
