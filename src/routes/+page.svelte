@@ -4,16 +4,59 @@
     import CreatePost from "$lib/components/Post/CreatePost.svelte";
     import PostStat from "$lib/components/Post/PostStat.svelte";
     import Modal from "$lib/components/Modal.svelte";
+    import api from "$lib/api.js";
+    import { onMount } from 'svelte';
+    import {user} from "$lib/stores/user-store.js";
 
-    const posts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let userData = $user;
+    let posts = [];
     let modalItem;
+    let loading = false;
+    let selectedItem;
+    let avatar = "/images/profile-placeholder.png";
 
-    $effect(() => {
+    let page = 1;
+    const perPage = 5;
+
+    onMount(() => {
         modalItem = document.getElementById("reply-modal");
+        avatar = userData?.profile_photo
+            ? `${import.meta.env.VITE_API_URL}/files/${userData.profile_photo}`
+            : "/images/profile-placeholder.png";
+        fetchData();
     });
 
-    function showModal() {
+    function showModal(item) {
+        selectedItem = item;
         HSOverlay.open(modalItem);
+    }
+
+    async function fetchData() {
+        if (loading) return; // Prevent multiple requests at the same time
+        loading = true;
+
+        try {
+            const response = await api.get(`/api/posts`, {
+                params: {
+                    page: page,
+                    per_page: perPage,
+                }
+            });
+            const data = response.data.data;
+            posts = [...posts, ...data.posts];
+            page++;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            loading = false;
+        }
+    }
+
+    function handleScroll(event) {
+        const bottom = event.target.scrollHeight === event.target.scrollTop + event.target.clientHeight;
+        if (bottom && !loading) {
+            fetchData();
+        }
     }
 </script>
 
@@ -23,9 +66,9 @@
 
 <Modal id="reply-modal" title="Reply">
     <div class="border rounded-xl py-4">
-        <PostCard />
+        <PostCard post_id={selectedItem?.uuid} user={selectedItem?.user} content={selectedItem?.content} created={selectedItem?.created_at} />
     </div>
-    <CreatePost>
+    <CreatePost {avatar}>
         <div class="w-full flex justify-between items-center">
             <label class="form-control flex items-center gap-0.5">
                 <input
@@ -61,32 +104,45 @@
     </form>
 </Header>
 
-<div class="w-auto h-auto">
+<div class="w-full max-w-3xl mx-auto p-4">
+    <!-- Main content wrapper -->
     <div
-        id="posts-container"
-        class="grid grid-flow-row overflow-y-scroll scroll-smooth"
+            id="posts-container"
+            class="space-y-6 overflow-y-auto overflow-x-hidden h-screen scrollbar-thin scrollbar-thumb-rounded-full scrollbar-thumb-gray-300"
+            style="height: calc(100vh - 120px);"
+            on:scroll={handleScroll}
     >
-        <div class="w-full border-b-2">
-            <CreatePost>
-                <div
-                    class="w-full flex justify-between items-center border-t-2 pt-4"
-                >
-                    <div></div>
-                    <button class="btn btn-primary rounded-full text-white px-6"
-                        >Post</button
-                    >
+        <!-- Create Post Card -->
+        <div class="w-full border-b-2 pb-4">
+            <CreatePost {avatar}>
+                <div class="w-full flex justify-between items-center">
+                    <button class="btn btn-primary rounded-full text-white px-6">Post</button>
                 </div>
             </CreatePost>
         </div>
-        <div class="mt-8">
-            {#each posts as post}
-                <PostCard>
-                    <div id="post-stats" class="w-full">
-                        <PostStat onreply={showModal} />
-                    </div>
-                </PostCard>
-                <div class="divider"></div>
+
+        <!-- Render posts -->
+        <div class="space-y-4">
+            {#each posts as post (post.uuid)}
+                <div class="overflow-hidden border-b-2 border-gray-200">
+                    <PostCard post_id={post.uuid} user={post.user} content={post.content} created={post.created_at}>
+                        <div id="post-stats" class="w-full pb-4">
+                            <PostStat stat={post.stats} onreply={() => showModal(post)} />
+                        </div>
+                    </PostCard>
+                </div>
             {/each}
         </div>
     </div>
 </div>
+
+<style>
+    #posts-container {
+        max-height: calc(100vh - 120px);  /* Adjust height */
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.2) rgba(255, 255, 255, 0.5);
+    }
+
+</style>
+

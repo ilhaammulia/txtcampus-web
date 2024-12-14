@@ -1,10 +1,9 @@
 <script>
     import { fade } from "svelte/transition";
-    import { formatDistance } from 'date-fns';
+    import { format, formatDistance, differenceInYears } from 'date-fns';
 
     let {
         user,
-        avatar = "/images/profile-placeholder.png",
         post_id = "1",
         content = "",
         created = new Date(),
@@ -13,9 +12,22 @@
         children,
     } = $props();
 
+    let avatar = $derived.by(() => {
+        if (user?.profile_photo) {
+            return String(import.meta.env.VITE_API_URL) + "/files/" + String(user.profile_photo);
+        }
+        return "/images/profile-placeholder.png";
+    });
+
     let createdAt = $derived.by(() => {
-      const now = new Date();
-      return formatDistance(created, now);
+        const now = new Date();
+        const yearsDifference = differenceInYears(now, created);
+
+        if (yearsDifference >= 1) {
+            return format(created, 'MMM dd, yyyy');
+        } else {
+            return formatDistance(created, now) + ' ago';
+        }
     })
 </script>
 
@@ -33,8 +45,8 @@
     </a>
     <div id="post-content" class="flex-grow flex flex-col gap-2">
         <div id="post-user" class="space-x-1">
-            <a href="/" class="font-semibold hover:underline">Ilham Mulia</a>
-            <a href="/" class="text-gray-400">@ilhammulia</a>
+            <a href={`/${user?.username}`} disabled={!user?.username} class="font-semibold hover:underline">{user ? user.name : "Hidden User"}</a>
+            <a href={`/${user?.username}`} disabled={!user?.username} class="text-gray-400">@{user ? user.username : "hidden" }</a>
             <span
                 class="icon-[tabler--circle-filled] size-1 align-middle text-gray-400"
             ></span>
@@ -42,11 +54,9 @@
         </div>
         <div id="post-data" class="flex-grow min-h-10 pr-12">
             <a href="/posts/{post_id}">
-                Twitter please do your magic!<br>
-                <br>
-                Guys, ini ibuku ketipu 😭 Ibuku punya usaha catering. Ibuku dapet orderan fiktif 😭 nasi box 120 kotak.. ternyata pemesannya penipu..
-                Yang berminat beli nasi kotaknya ibuku daerah sleman jogja boleh banget ya DM aku..
+                {content}
             </a>
+
         </div>
         {#if children}
             <div class="pt-2">
@@ -58,7 +68,7 @@
         <div
             class="w-12 h-12 rounded-full border-4 border-green-500 text-green-500 flex justify-center items-center"
         >
-            <h1 class="font-semibold">8.9</h1>
+            <h1 class="font-semibold">{score}</h1>
         </div>
     </div>
 </div>

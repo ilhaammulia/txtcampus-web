@@ -3,10 +3,10 @@
 
     let {
         stat = {
-            upvotes_count: 2800,
-            downvotes_count: 1340,
-            replies_count: 80,
-            bookmarks_count: 130,
+            upvotes: 0,
+            downvotes: 0,
+            replies: 0,
+            bookmarks: 0,
         },
         isUpvoted = false,
         isDownvoted = false,
@@ -15,10 +15,10 @@
     } = $props();
     
 
-    let upvoteCount = $derived(formatNumber(stat?.upvotes_count));
-    let downvoteCount = $derived(formatNumber(stat?.downvotes_count));
-    let replyCount = $derived(formatNumber(stat?.replies_count));
-    let bookmarkCount = $derived(formatNumber(stat?.bookmarks_count));
+    let upvoteCount = $derived(formatNumber(stat?.upvotes));
+    let downvoteCount = $derived(formatNumber(stat?.downvotes));
+    let replyCount = $derived(formatNumber(stat?.replies));
+    let bookmarkCount = $derived(formatNumber(stat?.bookmarks));
 </script>
 
 <div class="w-full flex justify-between items-center">
@@ -27,12 +27,12 @@
             <label class="swap cursor-pointer">
                 <input type="checkbox" bind:checked={isUpvoted} />
                 <span
-                    class="swap-on icon-[tabler--arrow-big-up-filled] bg-orange-500 size-5"
+                    class="swap-on icon-[tabler--arrow-big-up-filled] bg-green-500 size-5"
                 ></span>
                 <span class="swap-off icon-[tabler--arrow-big-up] size-5"
                 ></span>
             </label>
-            <span class="text-sm" class:text-orange-500={isUpvoted}
+            <span class="text-sm" class:text-green-500={isUpvoted}
                 >{upvoteCount}</span
             >
         </div>

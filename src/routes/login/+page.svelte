@@ -1,8 +1,28 @@
 <script>
+    import {setUser} from "$lib/stores/user-store.js";
+    import {setSession} from "$lib/stores/session-store.js";
+    import {goto} from "$app/navigation";
+    import api from "$lib/api.js";
+
     let username, password = "";
+    let errMessage = "";
 
     async function handleLogin() {
-        console.log(username, password);
+        try {
+            const response = await api.post("/api/auth/login", {
+                identifier: username,
+                password: password,
+            });
+            setUser(response.data.data.user);
+            setSession({
+                token: response.data.data.token,
+                expired_at: response.data.data.expired_at,
+            });
+            goto("/").then(r => console.debug("login successfully"));
+        } catch (err) {
+            console.debug("error login", err)
+            errMessage = err.response.data.data.message;
+        }
     }
 
 </script>
@@ -16,17 +36,17 @@
         <span>txt</span>
         <span class="text-orange-500">campus</span>
     </div>
-    <div class="flex flex-col gap-4">
+    <form on:submit={handleLogin} class="flex flex-col gap-4">
         <label class="form-control w-full">
             <div class="label">
                 <span class="label-text">Username or Email Address</span>
             </div>
             <input
-                id="form-username"
-                bind:value={username}
-                type="text"
-                placeholder="Enter username or email"
-                class="input"
+                    id="form-username"
+                    bind:value={username}
+                    type="text"
+                    placeholder="Enter username or email"
+                    class="input"
             />
         </label>
         <label>
@@ -35,36 +55,38 @@
             </div>
             <div class="input-group w-full">
                 <input
-                    id="form-password"
-                    bind:value={password}
-                    type="password"
-                    class="input"
-                    placeholder="Enter password"
+                        id="form-password"
+                        bind:value={password}
+                        type="password"
+                        class="input"
+                        placeholder="Enter password"
                 />
                 <span class="input-group-text">
                     <button
-                        type="button"
-                        data-toggle-password={JSON.stringify({
+                            type="button"
+                            data-toggle-password={JSON.stringify({
                             target: "#form-password",
                         })}
-                        class="block"
-                        aria-label="password toggle"
+                            class="block"
+                            aria-label="password toggle"
                     >
                         <span
-                            class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 flex-shrink-0"
+                                class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 flex-shrink-0"
                         ></span>
                         <span
-                            class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 flex-shrink-0"
+                                class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 flex-shrink-0"
                         ></span>
                     </button>
                 </span>
             </div>
         </label>
+        {#if errMessage !== ""}
+            <span class="text-red-500 text-sm">Login Failed! { errMessage }</span>
+        {/if}
         <div class="mt-4">
-            <button on:click={handleLogin}
-                class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full"
-                >Login</button
-            >
+            <button type="submit"
+                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">Login
+            </button>
         </div>
-    </div>
+    </form>
 </div>
