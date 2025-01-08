@@ -1,5 +1,9 @@
 <script>
-    let { currentActive = "", currentUser = { username: "ilhammulia" } } = $props();
+    import {user} from "$lib/stores/user-store.js";
+    let { currentActive = "", } = $props();
+
+    let userData = $user;
+
 </script>
 
 <!-- Sidebar Menu -->
@@ -33,7 +37,7 @@
             </a>
         </li>
         <li>
-            <a href="/ilhammulia" class:active={currentActive === currentUser.username}>
+            <a href="/{userData?.username}" class:active={currentActive === userData?.username}>
                 <span class="icon-[tabler--user] size-8"></span>
                 Profile
             </a>

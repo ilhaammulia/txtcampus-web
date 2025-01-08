@@ -1,8 +1,7 @@
 <script>
-    import Header from "$lib/Header.svelte";
-    import PostCard from "$lib/Post/PostCard.svelte";
-    import PostStat from "$lib/Post/PostStat.svelte";
-    import UserCard from "$lib/User/UserCard.svelte";
+    import Header from "$lib/components/Header.svelte";
+    import PostCard from "$lib/components/Post/PostCard.svelte";
+    import PostStat from "$lib/components/Post/PostStat.svelte";
 
     const posts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 </script>

@@ -1,17 +1,22 @@
 <script>
     import {goto} from "$app/navigation";
-    import { login } from "$lib/services/user-service.js";
+    import { register } from "$lib/services/user-service.js";
 
-    let username, password = "";
-    let errMessage = "";
+    let form = $state({
+        username: null,
+        password: null,
+        email_address: null,
+        name: null,
+    })
+    let errMessage = $state(null);
     let isLoading = false;
 
-    async function handleLogin() {
+    async function handleRegister() {
         try {
             isLoading = true;
-            const [status, err] = await login(username, password);
+            const [status, err] = await register(form.username, form.password, form.email_address, form.name);
             if (status === true) {
-                goto("/").then(r => console.debug("login successfully"));
+                goto("/login").then(r => console.debug("register successfully"));
             } else {
                 errMessage = err;
             }
@@ -23,7 +28,7 @@
 </script>
 
 <svelte:head>
-    <title>Login | txtcampus</title>
+    <title>Register | txtcampus</title>
 </svelte:head>
 
 <div class="max-w-md w-full p-8">
@@ -31,16 +36,40 @@
         <span>txt</span>
         <span class="text-orange-500">campus</span>
     </div>
-    <form on:submit={handleLogin} class="flex flex-col gap-4">
+    <form onsubmit={handleRegister} class="flex flex-col gap-4">
         <label class="form-control w-full">
             <div class="label">
-                <span class="label-text">Username or Email Address</span>
+                <span class="label-text">Full Name</span>
+            </div>
+            <input
+                    id="form-name"
+                    bind:value={form.name}
+                    type="text"
+                    placeholder="Enter your name"
+                    class="input"
+            />
+        </label>
+        <label class="form-control w-full">
+            <div class="label">
+                <span class="label-text">Username</span>
             </div>
             <input
                     id="form-username"
-                    bind:value={username}
+                    bind:value={form.username}
                     type="text"
-                    placeholder="Enter username or email"
+                    placeholder="Enter username"
+                    class="input"
+            />
+        </label>
+        <label class="form-control w-full">
+            <div class="label">
+                <span class="label-text">Email Address</span>
+            </div>
+            <input
+                    id="form-username"
+                    bind:value={form.email_address}
+                    type="email"
+                    placeholder="Enter email address"
                     class="input"
             />
         </label>
@@ -51,7 +80,7 @@
             <div class="input-group w-full">
                 <input
                         id="form-password"
-                        bind:value={password}
+                        bind:value={form.password}
                         type="password"
                         class="input"
                         placeholder="Enter password"
@@ -75,15 +104,13 @@
                 </span>
             </div>
         </label>
-        {#if errMessage !== ""}
-            <span class="text-red-500 text-sm">Login Failed! { errMessage }</span>
-        {/if}
+        <span class:hidden={!errMessage} class="text-red-500 text-sm">Register Failed! { errMessage }</span>
         <div class="mt-4">
             <button type="submit"
-                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">{ isLoading ? "Loading..." : "Login" }
+                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">{ isLoading ? "Loading..." : "Register" }
             </button>
-            <a href="/register"
-               class="btn bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 shadow-none w-full mt-4">Register
+            <a href="/login"
+               class="btn bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 shadow-none w-full mt-4">Login
             </a>
         </div>
     </form>
