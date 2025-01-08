@@ -107,8 +107,11 @@
         <span class:hidden={!errMessage} class="text-red-500 text-sm">Register Failed! { errMessage }</span>
         <div class="mt-4">
             <button type="submit"
-                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">{ isLoading ? "Loading..." : "Login" }
+                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">{ isLoading ? "Loading..." : "Register" }
             </button>
+            <a href="/login"
+               class="btn bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 shadow-none w-full mt-4">Login
+            </a>
         </div>
     </form>
 </div>

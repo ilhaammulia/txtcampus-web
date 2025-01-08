@@ -82,6 +82,9 @@
             <button type="submit"
                     class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">{ isLoading ? "Loading..." : "Login" }
             </button>
+            <a href="/register"
+               class="btn bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 shadow-none w-full mt-4">Register
+            </a>
         </div>
     </form>
 </div>
