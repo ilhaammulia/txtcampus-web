@@ -106,7 +106,7 @@
         <div class="space-y-4">
             {#each posts as post (post)}
                 <div class="overflow-hidden border-b-2 border-gray-200">
-                    <PostCard post_id={post.uuid} user={post.user} content={post.content} created={post.created_at}>
+                    <PostCard post_id={post.uuid} user={post.user} content={post.content} created={post.created_at} sentimen={post.sentimen} score={post.sentimen_score}>
                         <div id="post-stats" class="w-full pb-4">
                             <PostStat post_id={post.uuid} stat={post.stats} isUpvoted={post.is_upvoted} isDownvoted={post.is_downvoted} isBookmarked={post.is_bookmarked} onreply={() => showModal(post)} />
                         </div>

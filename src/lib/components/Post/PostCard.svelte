@@ -20,7 +20,6 @@
         }
         return "/images/profile-placeholder.png";
     });
-
     let createdAt = $derived.by(() => {
         const now = new Date();
         const monthsDifference = differenceInMonths(now, created);
@@ -46,7 +45,7 @@
         </div>
     </a>
     <div id="post-content" class="flex-grow flex flex-col gap-2">
-        <div id="post-user" class="space-x-1">
+        <div id="post-user" class="space-x-1 w-full max-w-sm">
             <a href={`/${user?.username}`} disabled={!user?.username} class="font-semibold hover:underline">{user ? user.name : "Hidden User"}</a>
             <a href={`/${user?.username}`} disabled={!user?.username} class="text-gray-400">@{user ? user.username : "hidden" }</a>
             <span
@@ -75,7 +74,7 @@
                 : 'border-gray-500 text-gray-500'
         }`}
         >
-            <h1 class="font-semibold">{score}</h1>
+            <h1 class="font-semibold">{score || 0}</h1>
         </div>
     </div>
 </div>

@@ -10,7 +10,7 @@
 
   let { children, data } = $props();
 
-  let isAuthPage = $derived(data.currentActive.includes("login"))
+  let isAuthPage = $derived(data.currentActive.includes("login") || data.currentActive.includes("register"))
 
 </script>
 

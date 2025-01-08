@@ -20,6 +20,21 @@ export const login = async (username, password) => {
     }
 }
 
+export const register = async (username, password, email, name) => {
+    try {
+        const response = await api.post("/api/auth/register", {
+            username: username,
+            password: password,
+            email_address: email,
+            name: name,
+        });
+        return [true, response.data];
+    } catch (err) {
+        console.debug("error login", err)
+        return [false, err.response.data.message];
+    }
+}
+
 export const logout = async () => {
     clearSession();
 }

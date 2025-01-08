@@ -149,7 +149,7 @@
             <p class="text-center w-full mt-8 text-gray-400" class:hidden={posts.length > 0}>Not Found</p>
             {#each posts as post (post)}
                 <div class="overflow-hidden border-b-2 border-gray-200">
-                    <PostCard post_id={post.uuid} user={post.user} content={post.content} created={post.created_at}>
+                    <PostCard post_id={post.uuid} user={post.user} content={post.content} created={post.created_at} sentimen={post.sentimen} score={post.sentimen_score}>
                         <div id="post-stats" class="w-full pb-4">
                             <PostStat post_id={post.uuid} stat={post.stats} isUpvoted={post.is_upvoted} isDownvoted={post.is_downvoted} isBookmarked={post.is_bookmarked} onreply={() => showModal(post)} />
                         </div>
