@@ -4,9 +4,9 @@
     import CreatePost from "$lib/components/Post/CreatePost.svelte";
     import PostStat from "$lib/components/Post/PostStat.svelte";
     import Modal from "$lib/components/Modal.svelte";
-    import api from "$lib/api.js";
     import { onMount } from 'svelte';
     import {user} from "$lib/stores/user-store.js";
+    import { getPosts } from "$lib/services/post-service.js";
 
     let userData = $user;
     let posts = [];
@@ -31,23 +31,20 @@
         HSOverlay.open(modalItem);
     }
 
+    function closeModal() {
+        selectedItem = {};
+        HSOverlay.close(modalItem);
+    }
+
     async function fetchData() {
         if (loading) return; // Prevent multiple requests at the same time
         loading = true;
 
         try {
-            const response = await api.get(`/api/posts`, {
-                params: {
-                    page: page,
-                    per_page: perPage,
-                }
-            });
-            const data = response.data.data;
-            posts = [...posts, ...data.posts];
+            const data = await getPosts(page, perPage);
+            posts = [...posts, ...data];
             page++;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
+        }  finally {
             loading = false;
         }
     }
@@ -57,6 +54,10 @@
         if (bottom && !loading) {
             fetchData();
         }
+    }
+
+    function addPost(post) {
+        posts = [post, ...posts];
     }
 </script>
 
@@ -68,23 +69,7 @@
     <div class="border rounded-xl py-4">
         <PostCard post_id={selectedItem?.uuid} user={selectedItem?.user} content={selectedItem?.content} created={selectedItem?.created_at} />
     </div>
-    <CreatePost {avatar}>
-        <div class="w-full flex justify-between items-center">
-            <label class="form-control flex items-center gap-0.5">
-                <input
-                    type="checkbox"
-                    class="checkbox checkbox-primary checkbox-sm"
-                    checked
-                />
-                <span class="label cursor-pointer flex-col items-start">
-                    <span class="label-text text-sm">Post as official</span>
-                </span>
-            </label>
-            <button class="btn btn-primary rounded-full text-white px-6"
-                >Reply</button
-            >
-        </div>
-    </CreatePost>
+    <CreatePost {avatar} reply_to={selectedItem?.uuid} onsubmit={closeModal} />
 </Modal>
 
 <Header>
@@ -114,20 +99,16 @@
     >
         <!-- Create Post Card -->
         <div class="w-full border-b-2 pb-4">
-            <CreatePost {avatar}>
-                <div class="w-full flex justify-between items-center">
-                    <button class="btn btn-primary rounded-full text-white px-6">Post</button>
-                </div>
-            </CreatePost>
+            <CreatePost {avatar} addPost={addPost} />
         </div>
 
         <!-- Render posts -->
         <div class="space-y-4">
-            {#each posts as post (post.uuid)}
+            {#each posts as post (post)}
                 <div class="overflow-hidden border-b-2 border-gray-200">
                     <PostCard post_id={post.uuid} user={post.user} content={post.content} created={post.created_at}>
                         <div id="post-stats" class="w-full pb-4">
-                            <PostStat stat={post.stats} onreply={() => showModal(post)} />
+                            <PostStat post_id={post.uuid} stat={post.stats} isUpvoted={post.is_upvoted} isDownvoted={post.is_downvoted} isBookmarked={post.is_bookmarked} onreply={() => showModal(post)} />
                         </div>
                     </PostCard>
                 </div>

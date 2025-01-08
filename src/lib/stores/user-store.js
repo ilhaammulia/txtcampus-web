@@ -5,6 +5,7 @@ export const user = persistentStore("user", {
     name: "",
     bio: "",
     profile_photo: "",
+    role: "",
 });
 export function setUser(data) {
     user.set(data);
@@ -15,5 +16,6 @@ export function clearUser() {
         name: "",
         bio: "",
         profile_photo: "",
+        role: "",
     });
 }

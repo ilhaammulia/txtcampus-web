@@ -1,16 +1,18 @@
 <script>
     import { fade } from "svelte/transition";
-    import { format, formatDistance, differenceInYears } from 'date-fns';
+    import { format, formatDistance, differenceInMonths } from 'date-fns';
+    import {user as currentUser} from "$lib/stores/user-store.js";
 
     let {
         user,
         post_id = "1",
         content = "",
         created = new Date(),
-        sentimen,
-        score,
+        sentimen = "neutral",
+        score = 0,
         children,
     } = $props();
+    let userData = $currentUser;
 
     let avatar = $derived.by(() => {
         if (user?.profile_photo) {
@@ -21,9 +23,9 @@
 
     let createdAt = $derived.by(() => {
         const now = new Date();
-        const yearsDifference = differenceInYears(now, created);
+        const monthsDifference = differenceInMonths(now, created);
 
-        if (yearsDifference >= 1) {
+        if (monthsDifference >= 3) {
             return format(created, 'MMM dd, yyyy');
         } else {
             return formatDistance(created, now) + ' ago';
@@ -32,14 +34,14 @@
 </script>
 
 <div
-    transition:fade
+    transition:fade={{ duration: 100 }}
     class="relative w-full px-4 sm:px-8 flex justify-center items-start gap-4"
 >
     <a href="/" id="post-avatar" class="avatar">
         <div class="size-14 rounded-full">
             <img
                 src={avatar}
-                alt="avatar"
+                alt={user ? user.name : "Hidden User"}
             />
         </div>
     </a>
@@ -56,7 +58,6 @@
             <a href="/posts/{post_id}">
                 {content}
             </a>
-
         </div>
         {#if children}
             <div class="pt-2">
@@ -64,9 +65,15 @@
             </div>
         {/if}
     </div>
-    <div class:hidden={!sentimen} class="absolute top-0 right-6">
+    <div class:hidden={userData?.role !== 'admin'} class="absolute top-0 right-6">
         <div
-            class="w-12 h-12 rounded-full border-4 border-green-500 text-green-500 flex justify-center items-center"
+            class={`w-12 h-12 rounded-full border-4 flex justify-center items-center ${
+            sentimen === 'positive'
+                ? 'border-green-500 text-green-500'
+                : sentimen === 'negative'
+                ? 'border-red-500 text-red-500'
+                : 'border-gray-500 text-gray-500'
+        }`}
         >
             <h1 class="font-semibold">{score}</h1>
         </div>

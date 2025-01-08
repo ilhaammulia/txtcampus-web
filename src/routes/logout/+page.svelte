@@ -1,10 +1,10 @@
 <script>
     import {goto} from "$app/navigation";
     import {onMount} from "svelte";
-    import {clearSession} from "$lib/stores/session-store.js";
+    import {logout} from "$lib/services/user-service.js";
 
     onMount(() => {
-        clearSession();
+        logout();
         goto("/login");
     })
 

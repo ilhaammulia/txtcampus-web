@@ -1,27 +1,22 @@
 <script>
-    import {setUser} from "$lib/stores/user-store.js";
-    import {setSession} from "$lib/stores/session-store.js";
     import {goto} from "$app/navigation";
-    import api from "$lib/api.js";
+    import { login } from "$lib/services/user-service.js";
 
     let username, password = "";
     let errMessage = "";
+    let isLoading = false;
 
     async function handleLogin() {
         try {
-            const response = await api.post("/api/auth/login", {
-                identifier: username,
-                password: password,
-            });
-            setUser(response.data.data.user);
-            setSession({
-                token: response.data.data.token,
-                expired_at: response.data.data.expired_at,
-            });
-            goto("/").then(r => console.debug("login successfully"));
-        } catch (err) {
-            console.debug("error login", err)
-            errMessage = err.response.data.data.message;
+            isLoading = true;
+            const [status, err] = await login(username, password);
+            if (status === true) {
+                goto("/").then(r => console.debug("login successfully"));
+            } else {
+                errMessage = err;
+            }
+        } finally {
+            isLoading = false;
         }
     }
 
@@ -85,7 +80,7 @@
         {/if}
         <div class="mt-4">
             <button type="submit"
-                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">Login
+                    class="btn bg-orange-500 hover:bg-orange-600 rounded-lg text-white shadow-none w-full">{ isLoading ? "Loading..." : "Login" }
             </button>
         </div>
     </form>
