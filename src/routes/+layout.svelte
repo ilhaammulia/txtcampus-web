@@ -1,16 +1,27 @@
 <script>
   import '../app.css';
-  import { afterNavigate } from "$app/navigation";
+  import {afterNavigate, goto} from "$app/navigation";
 
   import Sidebar from '$lib/components/Sidebar.svelte';
-
-  afterNavigate(() => {
-    HSStaticMethods.autoInit();
-  });
+  import {get} from "svelte/store";
+  import {session} from "$lib/stores/session-store.js";
+  import {onMount} from "svelte";
 
   let { children, data } = $props();
 
-  let isAuthPage = $derived(data.currentActive.includes("login") || data.currentActive.includes("register"))
+  let isAuthPage = $derived(data.currentActive.includes("login") || data.currentActive.includes("register"));
+
+  afterNavigate(() => {
+      HSStaticMethods.autoInit();
+  });
+
+  onMount(() => {
+      const sessionData = get(session);
+      if (!sessionData || !sessionData.token) {
+          goto("/login");
+      }
+  })
+
 
 </script>
 
