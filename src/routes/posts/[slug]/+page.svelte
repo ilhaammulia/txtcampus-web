@@ -79,7 +79,7 @@
 
 <Modal id="reply-modal" title="Reply">
     <div class="border rounded-xl py-4">
-        <PostCard post_id={selectedItem?.uuid} user={selectedItem?.user} content={selectedItem?.content} created={selectedItem?.created_at} />
+        <PostCard post_id={selectedItem?.uuid} user={selectedItem?.user} content={selectedItem?.content} created={selectedItem?.created_at} sentimen={selectedItem?.sentimen} score={selectedItem?.sentimen_score} />
     </div>
     <CreatePost {avatar} reply_to={selectedItem?.uuid} addPost={addPost} onsubmit={closeModal} />
 </Modal>
@@ -88,7 +88,7 @@
 
 <div class="w-auto h-auto">
     <div class="border-b-2 mt-8 pb-8">
-        <PostCard post_id={post?.uuid} user={post?.user} content={post?.content} created={post?.created_at} />
+        <PostCard post_id={post?.uuid} user={post?.user} content={post?.content} created={post?.created_at} sentimen={post?.sentimen} score={post?.sentimen_score} />
     </div>
     <div class="border-b-2 py-6">
         <div class="max-w-xl mx-auto"><PostStat post_id={post?.uuid} stat={post?.stats} isUpvoted={post?.is_upvoted} isDownvoted={post?.is_downvoted} isBookmarked={post?.is_bookmarked} onreply={() => showModal(post)} /></div>
